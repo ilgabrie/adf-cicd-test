@@ -5,8 +5,8 @@
 		"factoryName": {
 			"value": "ucd-adf"
 		},
-		"Raw_data_accountKey": {
-			"value": ""
+		"AzureKeyVault1_properties_typeProperties_baseUrl": {
+			"value": "https://bigdata-keyvault.vault.azure.net/"
 		},
 		"Raw_data_properties_typeProperties_url": {
 			"value": "https://ucdadl.dfs.core.windows.net"

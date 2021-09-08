@@ -7,9 +7,9 @@
 			"metadata": "Data Factory name",
 			"defaultValue": "ucd-adf"
 		},
-		"Raw_data_accountKey": {
-			"type": "secureString",
-			"metadata": "Secure string for 'accountKey' of 'Raw_data'"
+		"AzureKeyVault1_properties_typeProperties_baseUrl": {
+			"type": "string",
+			"defaultValue": "https://bigdata-keyvault.vault.azure.net/"
 		},
 		"Raw_data_properties_typeProperties_url": {
 			"type": "string",
@@ -157,6 +157,33 @@
 						"userProperties": [],
 						"typeProperties": {
 							"notebookPath": "/Users/gabriel.illes@tsiddappagile.onmicrosoft.com/nyc_rides_stats"
+						},
+						"linkedServiceName": {
+							"referenceName": "Databricks_cluster",
+							"type": "LinkedServiceReference"
+						}
+					},
+					{
+						"name": "Financial_statistics",
+						"type": "DatabricksNotebook",
+						"dependsOn": [
+							{
+								"activity": "Validate-data",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"notebookPath": "/Users/gabriel.illes@tsiddappagile.onmicrosoft.com/financial_stats"
 						},
 						"linkedServiceName": {
 							"referenceName": "Databricks_cluster",
@@ -322,6 +349,19 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/AzureKeyVault1')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureKeyVault",
+				"typeProperties": {
+					"baseUrl": "[parameters('AzureKeyVault1_properties_typeProperties_baseUrl')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/Databricks_cluster')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
@@ -333,15 +373,9 @@
 					"authentication": "MSI",
 					"workspaceResourceId": "/subscriptions/4c437186-c626-4ef7-9a45-ff32e38f9fe1/resourceGroups/usecasedev-tools/providers/Microsoft.Databricks/workspaces/ucd-db",
 					"existingClusterId": "0906-084245-berms440"
-				},
-				"connectVia": {
-					"referenceName": "integrationRuntime1",
-					"type": "IntegrationRuntimeReference"
 				}
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/integrationRuntimes/integrationRuntime1')]"
-			]
+			"dependsOn": []
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/Raw_data')]",
@@ -353,17 +387,17 @@
 				"typeProperties": {
 					"url": "[parameters('Raw_data_properties_typeProperties_url')]",
 					"accountKey": {
-						"type": "SecureString",
-						"value": "[parameters('Raw_data_accountKey')]"
+						"type": "AzureKeyVaultSecret",
+						"store": {
+							"referenceName": "AzureKeyVault1",
+							"type": "LinkedServiceReference"
+						},
+						"secretName": "ucdadl-storagekey"
 					}
-				},
-				"connectVia": {
-					"referenceName": "integrationRuntime1",
-					"type": "IntegrationRuntimeReference"
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/integrationRuntimes/integrationRuntime1')]"
+				"[concat(variables('factoryId'), '/linkedServices/AzureKeyVault1')]"
 			]
 		},
 		{
@@ -382,15 +416,9 @@
 					"url": "[parameters('nyc_data_properties_typeProperties_url')]",
 					"enableServerCertificateValidation": false,
 					"authenticationType": "Anonymous"
-				},
-				"connectVia": {
-					"referenceName": "integrationRuntime1",
-					"type": "IntegrationRuntimeReference"
 				}
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/integrationRuntimes/integrationRuntime1')]"
-			]
+			"dependsOn": []
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/new_file')]",
@@ -422,25 +450,6 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/pipelines/value_pipeline')]"
 			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/integrationRuntime1')]",
-			"type": "Microsoft.DataFactory/factories/integrationRuntimes",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"type": "Managed",
-				"typeProperties": {
-					"computeProperties": {
-						"location": "West Europe",
-						"dataFlowProperties": {
-							"computeType": "General",
-							"coreCount": 8,
-							"timeToLive": 0
-						}
-					}
-				}
-			},
-			"dependsOn": []
 		}
 	]
 }
