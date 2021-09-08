@@ -5,6 +5,9 @@
 		"factoryName": {
 			"value": "bigdata-adf-test"
 		},
+		"AzureKeyVault1_properties_typeProperties_baseUrl": {
+			"value": "https://bigdata-keyvault.vault.azure.net/"
+		},
 		"Raw_data_properties_typeProperties_url": {
 			"value": "https://ucdadl.dfs.core.windows.net"
 		},
@@ -13,9 +16,6 @@
 		},
 		"new_file_properties_typeProperties_scope": {
 			"value": "/subscriptions/4c437186-c626-4ef7-9a45-ff32e38f9fe1/resourceGroups/usecasedev/providers/Microsoft.Storage/storageAccounts/ucdadl"
-		},
-		"AzureKeyVault1_properties_typeProperties_baseUrl": {
-			"value": "https://bigdata-keyvault.vault.azure.net/"
 		}
 	}
 }

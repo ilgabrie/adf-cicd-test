@@ -7,13 +7,13 @@
 			"metadata": "Data Factory name",
 			"defaultValue": "bigdata-adf-test"
 		},
-		"nyc_data_properties_typeProperties_url": {
-			"type": "string",
-			"defaultValue": "@{concat('https://s3.amazonaws.com/nyc-tlc/trip+data/', linkedService().filename)}"
-		},
 		"AzureKeyVault1_properties_typeProperties_baseUrl": {
 			"type": "string",
 			"defaultValue": "https://bigdata-keyvault.vault.azure.net/"
+		},
+		"nyc_data_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "@{concat('https://s3.amazonaws.com/nyc-tlc/trip+data/', linkedService().filename)}"
 		},
 		"Raw_data_properties_typeProperties_url": {
 			"type": "string",
@@ -28,6 +28,19 @@
 		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
 	},
 	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureKeyVault1')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureKeyVault",
+				"typeProperties": {
+					"baseUrl": "[parameters('AzureKeyVault1_properties_typeProperties_baseUrl')]"
+				}
+			},
+			"dependsOn": []
+		},
 		{
 			"name": "[concat(parameters('factoryName'), '/Databricks_cluster')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
@@ -60,19 +73,6 @@
 					"url": "[parameters('nyc_data_properties_typeProperties_url')]",
 					"enableServerCertificateValidation": false,
 					"authenticationType": "Anonymous"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/AzureKeyVault1')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "AzureKeyVault",
-				"typeProperties": {
-					"baseUrl": "[parameters('AzureKeyVault1_properties_typeProperties_baseUrl')]"
 				}
 			},
 			"dependsOn": []
@@ -124,6 +124,33 @@
 						"userProperties": [],
 						"typeProperties": {
 							"notebookPath": "/Users/gabriel.illes@tsiddappagile.onmicrosoft.com/nyc_rides_stats"
+						},
+						"linkedServiceName": {
+							"referenceName": "Databricks_cluster",
+							"type": "LinkedServiceReference"
+						}
+					},
+					{
+						"name": "Financial_statistics",
+						"type": "DatabricksNotebook",
+						"dependsOn": [
+							{
+								"activity": "Ride-statistics",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"notebookPath": "/Users/gabriel.illes@tsiddappagile.onmicrosoft.com/financial_stats"
 						},
 						"linkedServiceName": {
 							"referenceName": "Databricks_cluster",

@@ -6,22 +6,6 @@
 			"type": "string",
 			"metadata": "Data Factory name",
 			"defaultValue": "bigdata-adf-test"
-		},
-		"AzureKeyVault1_properties_typeProperties_baseUrl": {
-			"type": "string",
-			"defaultValue": "https://bigdata-keyvault.vault.azure.net/"
-		},
-		"Raw_data_properties_typeProperties_url": {
-			"type": "string",
-			"defaultValue": "https://ucdadl.dfs.core.windows.net"
-		},
-		"nyc_data_properties_typeProperties_url": {
-			"type": "string",
-			"defaultValue": "@{concat('https://s3.amazonaws.com/nyc-tlc/trip+data/', linkedService().filename)}"
-		},
-		"new_file_properties_typeProperties_scope": {
-			"type": "string",
-			"defaultValue": "/subscriptions/4c437186-c626-4ef7-9a45-ff32e38f9fe1/resourceGroups/usecasedev/providers/Microsoft.Storage/storageAccounts/ucdadl"
 		}
 	},
 	"variables": {
@@ -91,8 +75,7 @@
 						"outputs": [
 							{
 								"referenceName": "nyc_dest_dataset",
-								"type": "DatasetReference",
-								"parameters": {}
+								"type": "DatasetReference"
 							}
 						]
 					}
@@ -356,7 +339,7 @@
 				"annotations": [],
 				"type": "AzureKeyVault",
 				"typeProperties": {
-					"baseUrl": "[parameters('AzureKeyVault1_properties_typeProperties_baseUrl')]"
+					"baseUrl": "https://bigdata-keyvault.vault.azure.net/"
 				}
 			},
 			"dependsOn": []
@@ -385,7 +368,7 @@
 				"annotations": [],
 				"type": "AzureBlobFS",
 				"typeProperties": {
-					"url": "[parameters('Raw_data_properties_typeProperties_url')]",
+					"url": "https://ucdadl.dfs.core.windows.net",
 					"accountKey": {
 						"type": "AzureKeyVaultSecret",
 						"store": {
@@ -413,7 +396,7 @@
 				"annotations": [],
 				"type": "HttpServer",
 				"typeProperties": {
-					"url": "[parameters('nyc_data_properties_typeProperties_url')]",
+					"url": "@{concat('https://s3.amazonaws.com/nyc-tlc/trip+data/', linkedService().filename)}",
 					"enableServerCertificateValidation": false,
 					"authenticationType": "Anonymous"
 				}
@@ -432,8 +415,7 @@
 						"pipelineReference": {
 							"referenceName": "value_pipeline",
 							"type": "PipelineReference"
-						},
-						"parameters": {}
+						}
 					}
 				],
 				"type": "BlobEventsTrigger",
@@ -441,7 +423,7 @@
 					"blobPathBeginsWith": "/raw-data/blobs/nyc_data/",
 					"blobPathEndsWith": ".csv",
 					"ignoreEmptyBlobs": true,
-					"scope": "[parameters('new_file_properties_typeProperties_scope')]",
+					"scope": "/subscriptions/4c437186-c626-4ef7-9a45-ff32e38f9fe1/resourceGroups/usecasedev/providers/Microsoft.Storage/storageAccounts/ucdadl",
 					"events": [
 						"Microsoft.Storage.BlobCreated"
 					]
