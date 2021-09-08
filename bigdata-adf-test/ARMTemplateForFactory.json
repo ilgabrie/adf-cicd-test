@@ -7,10 +7,6 @@
 			"metadata": "Data Factory name",
 			"defaultValue": "bigdata-adf-test"
 		},
-		"Raw_data_accountKey": {
-			"type": "secureString",
-			"metadata": "Secure string for 'accountKey' of 'Raw_data'"
-		},
 		"Raw_data_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://ucdadl.dfs.core.windows.net"
@@ -22,6 +18,10 @@
 		"new_file_properties_typeProperties_scope": {
 			"type": "string",
 			"defaultValue": "/subscriptions/4c437186-c626-4ef7-9a45-ff32e38f9fe1/resourceGroups/usecasedev/providers/Microsoft.Storage/storageAccounts/ucdadl"
+		},
+		"AzureKeyVault1_properties_typeProperties_baseUrl": {
+			"type": "string",
+			"defaultValue": "https://bigdata-keyvault.vault.azure.net/"
 		}
 	},
 	"variables": {
@@ -347,12 +347,18 @@
 				"typeProperties": {
 					"url": "[parameters('Raw_data_properties_typeProperties_url')]",
 					"accountKey": {
-						"type": "SecureString",
-						"value": "[parameters('Raw_data_accountKey')]"
+						"type": "AzureKeyVaultSecret",
+						"store": {
+							"referenceName": "AzureKeyVault1",
+							"type": "LinkedServiceReference"
+						},
+						"secretName": "ucdadl-storagekey"
 					}
 				}
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureKeyVault1')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/nyc_data')]",
@@ -404,6 +410,19 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/pipelines/value_pipeline')]"
 			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureKeyVault1')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureKeyVault",
+				"typeProperties": {
+					"baseUrl": "[parameters('AzureKeyVault1_properties_typeProperties_baseUrl')]"
+				}
+			},
+			"dependsOn": []
 		}
 	]
 }
