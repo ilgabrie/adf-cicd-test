@@ -13,10 +13,6 @@
 			"url": "@{concat('https://s3.amazonaws.com/nyc-tlc/trip+data/', linkedService().filename)}",
 			"enableServerCertificateValidation": false,
 			"authenticationType": "Anonymous"
-		},
-		"connectVia": {
-			"referenceName": "integrationRuntime1",
-			"type": "IntegrationRuntimeReference"
 		}
 	}
 }

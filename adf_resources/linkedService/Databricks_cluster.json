@@ -9,10 +9,6 @@
 			"authentication": "MSI",
 			"workspaceResourceId": "/subscriptions/4c437186-c626-4ef7-9a45-ff32e38f9fe1/resourceGroups/usecasedev-tools/providers/Microsoft.Databricks/workspaces/ucd-db",
 			"existingClusterId": "0906-084245-berms440"
-		},
-		"connectVia": {
-			"referenceName": "integrationRuntime1",
-			"type": "IntegrationRuntimeReference"
 		}
 	}
 }
