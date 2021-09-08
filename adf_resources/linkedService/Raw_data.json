@@ -13,10 +13,6 @@
 				},
 				"secretName": "ucdadl-storagekey"
 			}
-		},
-		"connectVia": {
-			"referenceName": "integrationRuntime1",
-			"type": "IntegrationRuntimeReference"
 		}
 	},
 	"type": "Microsoft.DataFactory/factories/linkedservices"
