@@ -1,0 +1,9 @@
+{
+	"name": "ucd-adf",
+	"location": "westeurope",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "2e3490a9-a5b2-413d-b4e2-f8bf90cdb253",
+		"tenantId": "13d65d7e-105e-4b2d-a2ed-c7f66d7748fb"
+	}
+}
