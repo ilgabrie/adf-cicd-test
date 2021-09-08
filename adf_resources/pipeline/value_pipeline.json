@@ -48,6 +48,33 @@
 					"referenceName": "Databricks_cluster",
 					"type": "LinkedServiceReference"
 				}
+			},
+			{
+				"name": "Financial_statistics",
+				"type": "DatabricksNotebook",
+				"dependsOn": [
+					{
+						"activity": "Validate-data",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/Users/gabriel.illes@tsiddappagile.onmicrosoft.com/financial_stats"
+				},
+				"linkedServiceName": {
+					"referenceName": "Databricks_cluster",
+					"type": "LinkedServiceReference"
+				}
 			}
 		],
 		"annotations": [],
