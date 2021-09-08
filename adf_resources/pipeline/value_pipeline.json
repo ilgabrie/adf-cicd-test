@@ -54,7 +54,7 @@
 				"type": "DatabricksNotebook",
 				"dependsOn": [
 					{
-						"activity": "Ride-statistics",
+						"activity": "Validate-data",
 						"dependencyConditions": [
 							"Succeeded"
 						]
