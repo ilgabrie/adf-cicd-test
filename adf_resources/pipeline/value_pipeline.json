@@ -148,7 +148,7 @@
 				]
 			},
 			{
-				"name": "Delete1",
+				"name": "Delete processed file",
 				"type": "Delete",
 				"dependsOn": [
 					{
