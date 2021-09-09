@@ -230,7 +230,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"expression": {
-						"value": "@equals(activity('Get column count').output.columnCount, 20)",
+						"value": "@equals(activity('Get column count').output.columnCount, 25)",
 						"type": "Expression"
 					}
 				}
