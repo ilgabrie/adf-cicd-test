@@ -5,14 +5,7 @@
 			{
 				"name": "Validate-data",
 				"type": "DatabricksNotebook",
-				"dependsOn": [
-					{
-						"activity": "If Condition1",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
+				"dependsOn": [],
 				"policy": {
 					"timeout": "7.00:00:00",
 					"retry": 0,
@@ -183,55 +176,6 @@
 						"type": "AzureBlobFSReadSettings",
 						"recursive": true,
 						"enablePartitionDiscovery": false
-					}
-				}
-			},
-			{
-				"name": "Get column count",
-				"type": "GetMetadata",
-				"dependsOn": [],
-				"policy": {
-					"timeout": "7.00:00:00",
-					"retry": 0,
-					"retryIntervalInSeconds": 30,
-					"secureOutput": false,
-					"secureInput": false
-				},
-				"userProperties": [],
-				"typeProperties": {
-					"dataset": {
-						"referenceName": "nyc_dest_dataset",
-						"type": "DatasetReference"
-					},
-					"fieldList": [
-						"columnCount"
-					],
-					"storeSettings": {
-						"type": "AzureBlobFSReadSettings",
-						"recursive": true,
-						"enablePartitionDiscovery": false
-					},
-					"formatSettings": {
-						"type": "DelimitedTextReadSettings"
-					}
-				}
-			},
-			{
-				"name": "If Condition1",
-				"type": "IfCondition",
-				"dependsOn": [
-					{
-						"activity": "Get column count",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
-				"userProperties": [],
-				"typeProperties": {
-					"expression": {
-						"value": "@equals(activity('Get column count').output.columnCount, 25)",
-						"type": "Expression"
 					}
 				}
 			}
