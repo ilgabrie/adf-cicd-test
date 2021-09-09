@@ -77,7 +77,7 @@
 				}
 			},
 			{
-				"name": "Copy data1",
+				"name": "Copy to Archive",
 				"type": "Copy",
 				"dependsOn": [
 					{
