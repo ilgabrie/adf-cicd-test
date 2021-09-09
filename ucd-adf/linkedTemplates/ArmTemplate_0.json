@@ -634,7 +634,7 @@
 						"userProperties": [],
 						"typeProperties": {
 							"expression": {
-								"value": "@equals(activity('Get column count').output.columnCount, 18)",
+								"value": "@equals(activity('Get column count').output.columnCount, 20)",
 								"type": "Expression"
 							},
 							"ifFalseActivities": [
