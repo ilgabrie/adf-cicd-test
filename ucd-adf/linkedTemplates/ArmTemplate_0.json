@@ -710,7 +710,7 @@
 											"referenceName": "value_pipeline",
 											"type": "PipelineReference"
 										},
-										"waitOnCompletion": true,
+										"waitOnCompletion": false,
 										"parameters": {}
 									}
 								}
