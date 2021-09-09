@@ -368,14 +368,7 @@
 					{
 						"name": "Validate-data",
 						"type": "DatabricksNotebook",
-						"dependsOn": [
-							{
-								"activity": "If Condition1",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
+						"dependsOn": [],
 						"policy": {
 							"timeout": "7.00:00:00",
 							"retry": 0,
@@ -551,7 +544,23 @@
 								"enablePartitionDiscovery": false
 							}
 						}
-					},
+					}
+				],
+				"annotations": [],
+				"lastPublishTime": "2021-09-07T16:01:48Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/Databricks_cluster')]",
+				"[concat(variables('factoryId'), '/datasets/nyc_dest_dataset')]",
+				"[concat(variables('factoryId'), '/datasets/Archive_files')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/test input file')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
 					{
 						"name": "Get column count",
 						"type": "GetMetadata",
@@ -597,19 +606,33 @@
 						"userProperties": [],
 						"typeProperties": {
 							"expression": {
-								"value": "@equals(activity('Get column count').output.columnCount, 25)",
+								"value": "@equals(activity('Get column count').output.columnCount, 20)",
 								"type": "Expression"
-							}
+							},
+							"ifTrueActivities": [
+								{
+									"name": "Execute ETL",
+									"type": "ExecutePipeline",
+									"dependsOn": [],
+									"userProperties": [],
+									"typeProperties": {
+										"pipeline": {
+											"referenceName": "value_pipeline",
+											"type": "PipelineReference"
+										},
+										"waitOnCompletion": true,
+										"parameters": {}
+									}
+								}
+							]
 						}
 					}
 				],
-				"annotations": [],
-				"lastPublishTime": "2021-09-07T16:01:48Z"
+				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/Databricks_cluster')]",
 				"[concat(variables('factoryId'), '/datasets/nyc_dest_dataset')]",
-				"[concat(variables('factoryId'), '/datasets/Archive_files')]"
+				"[concat(variables('factoryId'), '/pipelines/value_pipeline')]"
 			]
 		},
 		{
@@ -622,7 +645,7 @@
 				"pipelines": [
 					{
 						"pipelineReference": {
-							"referenceName": "value_pipeline",
+							"referenceName": "test input file",
 							"type": "PipelineReference"
 						},
 						"parameters": {}
@@ -640,7 +663,7 @@
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/value_pipeline')]"
+				"[concat(variables('factoryId'), '/pipelines/test input file')]"
 			]
 		}
 	]
