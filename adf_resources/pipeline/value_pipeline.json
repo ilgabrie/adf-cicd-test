@@ -15,7 +15,7 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
-					"notebookPath": "/Users/gabriel.illes@tsiddappagile.onmicrosoft.com/clean_data"
+					"notebookPath": "/Repos/gabriel.illes@tsiddappagile.onmicrosoft.com/Databricks_notebooks/notebooks/Users/gabriel.illes@tsiddappagile.onmicrosoft.com/clean_data"
 				},
 				"linkedServiceName": {
 					"referenceName": "Databricks_cluster",
@@ -42,7 +42,7 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
-					"notebookPath": "/Users/gabriel.illes@tsiddappagile.onmicrosoft.com/nyc_rides_stats"
+					"notebookPath": "/Repos/gabriel.illes@tsiddappagile.onmicrosoft.com/Databricks_notebooks/notebooks/Users/gabriel.illes@tsiddappagile.onmicrosoft.com/nyc_rides_stats"
 				},
 				"linkedServiceName": {
 					"referenceName": "Databricks_cluster",
@@ -69,7 +69,7 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
-					"notebookPath": "/Users/gabriel.illes@tsiddappagile.onmicrosoft.com/financial_stats"
+					"notebookPath": "/Repos/gabriel.illes@tsiddappagile.onmicrosoft.com/Databricks_notebooks/notebooks/Users/gabriel.illes@tsiddappagile.onmicrosoft.com/financial_stats"
 				},
 				"linkedServiceName": {
 					"referenceName": "Databricks_cluster",
