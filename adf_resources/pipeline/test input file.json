@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "Get column count",
+				"name": "Get filename",
 				"type": "GetMetadata",
 				"dependsOn": [],
 				"policy": {
@@ -249,7 +249,7 @@
 				"type": "SetVariable",
 				"dependsOn": [
 					{
-						"activity": "Get column count",
+						"activity": "Get filename",
 						"dependencyConditions": [
 							"Succeeded"
 						]
