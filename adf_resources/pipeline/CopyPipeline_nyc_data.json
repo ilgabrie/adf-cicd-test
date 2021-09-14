@@ -52,6 +52,10 @@
 							"month": {
 								"value": "@pipeline().parameters.month",
 								"type": "Expression"
+							},
+							"filename": {
+								"value": "@concat('green_tripdata_2020-', pipeline().parameters.month, '.csv')",
+								"type": "Expression"
 							}
 						}
 					}
