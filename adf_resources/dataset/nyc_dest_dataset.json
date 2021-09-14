@@ -5,11 +5,6 @@
 			"referenceName": "Raw_data",
 			"type": "LinkedServiceReference"
 		},
-		"parameters": {
-			"month": {
-				"type": "string"
-			}
-		},
 		"annotations": [],
 		"type": "DelimitedText",
 		"typeProperties": {
