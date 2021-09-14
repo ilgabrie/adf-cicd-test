@@ -107,8 +107,6 @@
 						"storeSettings": {
 							"type": "AzureBlobFSReadSettings",
 							"recursive": true,
-							"wildcardFolderPath": "nyc_data",
-							"wildcardFileName": "green_tripdata_*.csv",
 							"enablePartitionDiscovery": false
 						},
 						"formatSettings": {
@@ -177,7 +175,6 @@
 					"storeSettings": {
 						"type": "AzureBlobFSReadSettings",
 						"recursive": true,
-						"wildcardFileName": "green_tripdata_*.csv",
 						"enablePartitionDiscovery": false
 					}
 				}
