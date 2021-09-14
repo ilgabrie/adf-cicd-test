@@ -10,6 +10,7 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
+				"fileName": "green_tripdata_*.csv",
 				"folderPath": "nyc_data",
 				"fileSystem": "raw-data"
 			},
