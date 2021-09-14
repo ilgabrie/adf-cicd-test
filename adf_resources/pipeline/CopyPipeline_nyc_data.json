@@ -65,9 +65,6 @@
 			}
 		],
 		"parameters": {
-			"month": {
-				"type": "string"
-			},
 			"url": {
 				"type": "string"
 			}
