@@ -259,7 +259,7 @@
 				"typeProperties": {
 					"variableName": "filename",
 					"value": {
-						"value": "activity('Get column count').output.childItems[0].name",
+						"value": "@activity('Get filename').output.childItems[0].name",
 						"type": "Expression"
 					}
 				}
