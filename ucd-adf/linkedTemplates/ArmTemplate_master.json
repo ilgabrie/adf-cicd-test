@@ -17,7 +17,7 @@
 		},
 		"nyc_data_properties_typeProperties_url": {
 			"type": "string",
-			"defaultValue": "@{concat('https://s3.amazonaws.com/nyc-tlc/trip+data/', linkedService().filename)}"
+			"defaultValue": "https://s3.amazonaws.com/nyc-tlc/trip+data/"
 		},
 		"new_file_properties_typeProperties_scope": {
 			"type": "string",

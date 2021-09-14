@@ -6,22 +6,6 @@
 			"type": "string",
 			"metadata": "Data Factory name",
 			"defaultValue": "ucd-adf"
-		},
-		"AzureKeyVault1_properties_typeProperties_baseUrl": {
-			"type": "string",
-			"defaultValue": "https://bigdata-keyvault.vault.azure.net/"
-		},
-		"Raw_data_properties_typeProperties_url": {
-			"type": "string",
-			"defaultValue": "https://ucdadl.dfs.core.windows.net"
-		},
-		"nyc_data_properties_typeProperties_url": {
-			"type": "string",
-			"defaultValue": "https://s3.amazonaws.com/nyc-tlc/trip+data/"
-		},
-		"new_file_properties_typeProperties_scope": {
-			"type": "string",
-			"defaultValue": "/subscriptions/4c437186-c626-4ef7-9a45-ff32e38f9fe1/resourceGroups/usecasedev/providers/Microsoft.Storage/storageAccounts/ucdadl"
 		}
 	},
 	"variables": {
@@ -140,8 +124,7 @@
 						"typeProperties": {
 							"dataset": {
 								"referenceName": "nyc_raw_data_file",
-								"type": "DatasetReference",
-								"parameters": {}
+								"type": "DatasetReference"
 							},
 							"fieldList": [
 								"columnCount"
@@ -222,15 +205,13 @@
 									"inputs": [
 										{
 											"referenceName": "nyc_raw_data_file",
-											"type": "DatasetReference",
-											"parameters": {}
+											"type": "DatasetReference"
 										}
 									],
 									"outputs": [
 										{
 											"referenceName": "faulty_files",
-											"type": "DatasetReference",
-											"parameters": {}
+											"type": "DatasetReference"
 										}
 									]
 								}
@@ -246,8 +227,7 @@
 											"referenceName": "value_pipeline",
 											"type": "PipelineReference"
 										},
-										"waitOnCompletion": false,
-										"parameters": {}
+										"waitOnCompletion": false
 									}
 								}
 							]
@@ -258,7 +238,6 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/nyc_raw_data_file')]",
-				"[concat(variables('factoryId'), '/datasets/faulty_files')]",
 				"[concat(variables('factoryId'), '/pipelines/value_pipeline')]"
 			]
 		},
@@ -403,15 +382,13 @@
 						"inputs": [
 							{
 								"referenceName": "nyc_raw_data_file",
-								"type": "DatasetReference",
-								"parameters": {}
+								"type": "DatasetReference"
 							}
 						],
 						"outputs": [
 							{
 								"referenceName": "Archive_files",
-								"type": "DatasetReference",
-								"parameters": {}
+								"type": "DatasetReference"
 							}
 						]
 					},
@@ -437,8 +414,7 @@
 						"typeProperties": {
 							"dataset": {
 								"referenceName": "nyc_raw_data_file",
-								"type": "DatasetReference",
-								"parameters": {}
+								"type": "DatasetReference"
 							},
 							"enableLogging": false,
 							"storeSettings": {
@@ -453,64 +429,7 @@
 				"lastPublishTime": "2021-09-07T16:01:48Z"
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/Databricks_cluster')]",
-				"[concat(variables('factoryId'), '/datasets/nyc_raw_data_file')]",
-				"[concat(variables('factoryId'), '/datasets/Archive_files')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/Archive_files')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "Raw_data",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"fileSystem": "archive"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"quoteChar": "\""
-				},
-				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/Raw_data')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/faulty_files')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "Raw_data",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"folderPath": "faulty_files",
-						"fileSystem": "archive"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"quoteChar": "\""
-				},
-				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/Raw_data')]"
+				"[concat(variables('factoryId'), '/datasets/nyc_raw_data_file')]"
 			]
 		},
 		{
@@ -546,9 +465,7 @@
 				},
 				"schema": []
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/Raw_data')]"
-			]
+			"dependsOn": []
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/nyc_source_dataset')]",
@@ -676,58 +593,6 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/AzureKeyVault1')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "AzureKeyVault",
-				"typeProperties": {
-					"baseUrl": "[parameters('AzureKeyVault1_properties_typeProperties_baseUrl')]"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/Databricks_cluster')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "AzureDatabricks",
-				"typeProperties": {
-					"domain": "https://adb-3181513034092848.8.azuredatabricks.net",
-					"authentication": "MSI",
-					"workspaceResourceId": "/subscriptions/4c437186-c626-4ef7-9a45-ff32e38f9fe1/resourceGroups/usecasedev-tools/providers/Microsoft.Databricks/workspaces/ucd-db",
-					"existingClusterId": "0906-084245-berms440"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/Raw_data')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "AzureBlobFS",
-				"typeProperties": {
-					"url": "[parameters('Raw_data_properties_typeProperties_url')]",
-					"accountKey": {
-						"type": "AzureKeyVaultSecret",
-						"store": {
-							"referenceName": "AzureKeyVault1",
-							"type": "LinkedServiceReference"
-						},
-						"secretName": "ucdadl-storagekey"
-					}
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureKeyVault1')]"
-			]
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/nyc_data')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
@@ -735,43 +600,12 @@
 				"annotations": [],
 				"type": "HttpServer",
 				"typeProperties": {
-					"url": "[parameters('nyc_data_properties_typeProperties_url')]",
+					"url": "https://s3.amazonaws.com/nyc-tlc/trip+data/",
 					"enableServerCertificateValidation": false,
 					"authenticationType": "Anonymous"
 				}
 			},
 			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/new_file')]",
-			"type": "Microsoft.DataFactory/factories/triggers",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"runtimeState": "Started",
-				"pipelines": [
-					{
-						"pipelineReference": {
-							"referenceName": "test input file",
-							"type": "PipelineReference"
-						},
-						"parameters": {}
-					}
-				],
-				"type": "BlobEventsTrigger",
-				"typeProperties": {
-					"blobPathBeginsWith": "/raw-data/blobs/nyc_data/",
-					"blobPathEndsWith": ".csv",
-					"ignoreEmptyBlobs": true,
-					"scope": "[parameters('new_file_properties_typeProperties_scope')]",
-					"events": [
-						"Microsoft.Storage.BlobCreated"
-					]
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/test input file')]"
-			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/nyc_raw_data_file')]",
@@ -879,9 +713,7 @@
 					}
 				]
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/Raw_data')]"
-			]
+			"dependsOn": []
 		}
 	]
 }
