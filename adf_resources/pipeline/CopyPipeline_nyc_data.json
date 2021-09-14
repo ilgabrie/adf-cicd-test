@@ -59,13 +59,7 @@
 				"outputs": [
 					{
 						"referenceName": "nyc_dest_dataset",
-						"type": "DatasetReference",
-						"parameters": {
-							"month": {
-								"value": "@pipeline().parameters.month",
-								"type": "Expression"
-							}
-						}
+						"type": "DatasetReference"
 					}
 				]
 			}
