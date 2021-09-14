@@ -127,6 +127,11 @@
 				}
 			}
 		],
+		"parameters": {
+			"month": {
+				"type": "string"
+			}
+		},
 		"annotations": []
 	}
 }
