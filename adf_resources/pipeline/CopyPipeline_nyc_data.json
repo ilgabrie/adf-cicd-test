@@ -100,7 +100,8 @@
 						}
 					},
 					"fieldList": [
-						"columnCount"
+						"columnCount",
+						"itemName"
 					],
 					"storeSettings": {
 						"type": "AzureBlobFSReadSettings",
@@ -109,6 +110,47 @@
 					"formatSettings": {
 						"type": "DelimitedTextReadSettings"
 					}
+				}
+			},
+			{
+				"name": "If Condition1",
+				"type": "IfCondition",
+				"dependsOn": [
+					{
+						"activity": "Get column count",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"expression": {
+						"value": "@equals(activity('Get column count').output.columnCount, 20)",
+						"type": "Expression"
+					},
+					"ifTrueActivities": [
+						{
+							"name": "Validate data",
+							"type": "DatabricksNotebook",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"notebookPath": "/Repos/gabriel.illes@tsiddappagile.onmicrosoft.com/Databricks_notebooks/notebooks/Users/gabriel.illes@tsiddappagile.onmicrosoft.com/clean_data"
+							},
+							"linkedServiceName": {
+								"referenceName": "Databricks_cluster",
+								"type": "LinkedServiceReference"
+							}
+						}
+					]
 				}
 			}
 		],
