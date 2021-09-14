@@ -59,7 +59,13 @@
 				"outputs": [
 					{
 						"referenceName": "nyc_dest_dataset",
-						"type": "DatasetReference"
+						"type": "DatasetReference",
+						"parameters": {
+							"filename": {
+								"value": "@last(split(pipeline().parameters.url, '/'))",
+								"type": "Expression"
+							}
+						}
 					}
 				]
 			}
