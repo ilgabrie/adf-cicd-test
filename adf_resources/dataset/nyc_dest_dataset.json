@@ -11,7 +11,7 @@
 			"location": {
 				"type": "AzureBlobFSLocation",
 				"fileName": {
-					"value": "@concat('NYC_Green_', formatDateTime(utcnow(), 'yyyy-MM-dd-HH'),'.csv')",
+					"value": "@concat('NYC_Green_', formatDateTime(utcnow(), 'yyyy-MM-dd-HH-mm'),'.csv')",
 					"type": "Expression"
 				},
 				"folderPath": "nyc_data",
