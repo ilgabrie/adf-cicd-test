@@ -49,12 +49,8 @@
 						"referenceName": "nyc_source_dataset",
 						"type": "DatasetReference",
 						"parameters": {
-							"month": {
-								"value": "@pipeline().parameters.month",
-								"type": "Expression"
-							},
-							"filename": {
-								"value": "@concat('green_tripdata_2020-', pipeline().parameters.month, '.csv')",
+							"url": {
+								"value": "@pipeline().parameters.url",
 								"type": "Expression"
 							}
 						}
