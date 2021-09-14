@@ -5,8 +5,8 @@
 			"referenceName": "nyc_data",
 			"type": "LinkedServiceReference",
 			"parameters": {
-				"filename": {
-					"value": "@concat('green_tripdata_2020-', dataset().month, '.csv')",
+				"url": {
+					"value": "@dataset().url",
 					"type": "Expression"
 				}
 			}
@@ -17,17 +17,16 @@
 			},
 			"filename": {
 				"type": "string"
+			},
+			"url": {
+				"type": "String"
 			}
 		},
 		"annotations": [],
 		"type": "DelimitedText",
 		"typeProperties": {
 			"location": {
-				"type": "HttpServerLocation",
-				"relativeUrl": {
-					"value": "@dataset().filename",
-					"type": "Expression"
-				}
+				"type": "HttpServerLocation"
 			},
 			"columnDelimiter": ",",
 			"escapeChar": "\\",
