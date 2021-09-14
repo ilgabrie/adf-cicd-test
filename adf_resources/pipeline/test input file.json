@@ -19,9 +19,7 @@
 						"referenceName": "nyc_raw_data_file",
 						"type": "DatasetReference"
 					},
-					"fieldList": [
-						"columnCount"
-					],
+					"fieldList": [],
 					"storeSettings": {
 						"type": "AzureBlobFSReadSettings",
 						"recursive": true,
