@@ -16,12 +16,10 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataset": {
-						"referenceName": "nyc_dest_dataset",
+						"referenceName": "nyc_raw_data_file",
 						"type": "DatasetReference"
 					},
-					"fieldList": [
-						"columnCount"
-					],
+					"fieldList": [],
 					"storeSettings": {
 						"type": "AzureBlobFSReadSettings",
 						"recursive": true,
@@ -51,7 +49,7 @@
 					},
 					"ifFalseActivities": [
 						{
-							"name": "Copy to archive",
+							"name": "Copy faulty files",
 							"type": "Copy",
 							"dependsOn": [],
 							"policy": {
@@ -68,6 +66,8 @@
 									"storeSettings": {
 										"type": "AzureBlobFSReadSettings",
 										"recursive": true,
+										"wildcardFolderPath": "nyc_data",
+										"wildcardFileName": "green_tripdata_*.csv",
 										"enablePartitionDiscovery": false
 									},
 									"formatSettings": {
@@ -97,7 +97,7 @@
 							},
 							"inputs": [
 								{
-									"referenceName": "nyc_dest_dataset",
+									"referenceName": "nyc_raw_data_file",
 									"type": "DatasetReference"
 								}
 							],
