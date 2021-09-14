@@ -17,11 +17,7 @@
 		},
 		"nyc_data_properties_typeProperties_url": {
 			"type": "string",
-			"defaultValue": "https://s3.amazonaws.com/nyc-tlc/trip+data/"
-		},
-		"new_file_properties_typeProperties_scope": {
-			"type": "string",
-			"defaultValue": "/subscriptions/4c437186-c626-4ef7-9a45-ff32e38f9fe1/resourceGroups/usecasedev/providers/Microsoft.Storage/storageAccounts/ucdadl"
+			"defaultValue": "@{linkedService().url}"
 		},
 		"containerUri": {
 			"type": "string",
@@ -58,9 +54,6 @@
 					},
 					"Raw_data_properties_typeProperties_url": {
 						"value": "[parameters('Raw_data_properties_typeProperties_url')]"
-					},
-					"new_file_properties_typeProperties_scope": {
-						"value": "[parameters('new_file_properties_typeProperties_scope')]"
 					}
 				}
 			},

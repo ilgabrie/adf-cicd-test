@@ -13,15 +13,11 @@
 		},
 		"nyc_data_properties_typeProperties_url": {
 			"type": "string",
-			"defaultValue": "https://s3.amazonaws.com/nyc-tlc/trip+data/"
+			"defaultValue": "@{linkedService().url}"
 		},
 		"Raw_data_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://ucdadl.dfs.core.windows.net"
-		},
-		"new_file_properties_typeProperties_scope": {
-			"type": "string",
-			"defaultValue": "/subscriptions/4c437186-c626-4ef7-9a45-ff32e38f9fe1/resourceGroups/usecasedev/providers/Microsoft.Storage/storageAccounts/ucdadl"
 		}
 	},
 	"variables": {
@@ -62,6 +58,11 @@
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
 			"properties": {
+				"parameters": {
+					"url": {
+						"type": "string"
+					}
+				},
 				"annotations": [],
 				"type": "HttpServer",
 				"typeProperties": {
@@ -80,25 +81,23 @@
 				"linkedServiceName": {
 					"referenceName": "nyc_data",
 					"type": "LinkedServiceReference",
-					"parameters": {}
+					"parameters": {
+						"url": {
+							"value": "@dataset().url",
+							"type": "Expression"
+						}
+					}
 				},
 				"parameters": {
-					"month": {
-						"type": "string"
-					},
-					"filename": {
-						"type": "string"
+					"url": {
+						"type": "String"
 					}
 				},
 				"annotations": [],
 				"type": "DelimitedText",
 				"typeProperties": {
 					"location": {
-						"type": "HttpServerLocation",
-						"relativeUrl": {
-							"value": "@dataset().filename",
-							"type": "Expression"
-						}
+						"type": "HttpServerLocation"
 					},
 					"columnDelimiter": ",",
 					"escapeChar": "\\",
@@ -280,8 +279,9 @@
 					"type": "LinkedServiceReference"
 				},
 				"parameters": {
-					"month": {
-						"type": "string"
+					"filename": {
+						"type": "String",
+						"defaultValue": "File name"
 					}
 				},
 				"annotations": [],
@@ -290,7 +290,7 @@
 					"location": {
 						"type": "AzureBlobFSLocation",
 						"fileName": {
-							"value": "@concat('green_tripdata_2020-', dataset().month, '.csv')",
+							"value": "@dataset().filename",
 							"type": "Expression"
 						},
 						"folderPath": "nyc_data",
@@ -417,13 +417,13 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/CopyPipeline_nyc_data')]",
+			"name": "[concat(parameters('factoryName'), '/Copy_nyc_data')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"activities": [
 					{
-						"name": "Copy_nyc_data",
+						"name": "Copy from URL",
 						"type": "Copy",
 						"dependsOn": [],
 						"policy": {
@@ -459,7 +459,7 @@
 								"formatSettings": {
 									"type": "DelimitedTextWriteSettings",
 									"quoteAllText": true,
-									"fileExtension": ".csv"
+									"fileExtension": ""
 								}
 							},
 							"enableStaging": false
@@ -469,12 +469,8 @@
 								"referenceName": "nyc_source_dataset",
 								"type": "DatasetReference",
 								"parameters": {
-									"month": {
-										"value": "@pipeline().parameters.month",
-										"type": "Expression"
-									},
-									"filename": {
-										"value": "@concat('green_tripdata_2020-', pipeline().parameters.month, '.csv')",
+									"url": {
+										"value": "@pipeline().parameters.url",
 										"type": "Expression"
 									}
 								}
@@ -485,38 +481,25 @@
 								"referenceName": "nyc_dest_dataset",
 								"type": "DatasetReference",
 								"parameters": {
-									"month": {
-										"value": "@pipeline().parameters.month",
+									"filename": {
+										"value": "@last(split(pipeline().parameters.url, '/'))",
 										"type": "Expression"
 									}
 								}
 							}
 						]
-					}
-				],
-				"parameters": {
-					"month": {
-						"type": "string"
-					}
-				},
-				"annotations": [],
-				"lastPublishTime": "2021-09-08T06:31:50Z"
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/nyc_source_dataset')]",
-				"[concat(variables('factoryId'), '/datasets/nyc_dest_dataset')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/test input file')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
+					},
 					{
-						"name": "Get filename",
+						"name": "Get column count",
 						"type": "GetMetadata",
-						"dependsOn": [],
+						"dependsOn": [
+							{
+								"activity": "Copy from URL",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
 						"policy": {
 							"timeout": "7.00:00:00",
 							"retry": 0,
@@ -527,12 +510,18 @@
 						"userProperties": [],
 						"typeProperties": {
 							"dataset": {
-								"referenceName": "nyc_raw_data_file",
+								"referenceName": "nyc_dest_dataset",
 								"type": "DatasetReference",
-								"parameters": {}
+								"parameters": {
+									"filename": {
+										"value": "@last(split(pipeline().parameters.url, '/'))",
+										"type": "Expression"
+									}
+								}
 							},
 							"fieldList": [
-								"childItems"
+								"columnCount",
+								"itemName"
 							],
 							"storeSettings": {
 								"type": "AzureBlobFSReadSettings",
@@ -549,7 +538,7 @@
 						"type": "IfCondition",
 						"dependsOn": [
 							{
-								"activity": "Set variable1",
+								"activity": "Get column count",
 								"dependencyConditions": [
 									"Succeeded"
 								]
@@ -558,7 +547,7 @@
 						"userProperties": [],
 						"typeProperties": {
 							"expression": {
-								"value": "@equals(variables('filename'), 20)",
+								"value": "@equals(activity('Get column count').output.columnCount, 20)",
 								"type": "Expression"
 							},
 							"ifFalseActivities": [
@@ -580,11 +569,6 @@
 											"storeSettings": {
 												"type": "AzureBlobFSReadSettings",
 												"recursive": true,
-												"wildcardFolderPath": "nyc_data",
-												"wildcardFileName": {
-													"value": "@variables('filename')",
-													"type": "Expression"
-												},
 												"enablePartitionDiscovery": false
 											},
 											"formatSettings": {
@@ -599,7 +583,10 @@
 											"formatSettings": {
 												"type": "DelimitedTextWriteSettings",
 												"quoteAllText": true,
-												"fileExtension": ".csv"
+												"fileExtension": {
+													"value": "@activity('Get column count').output.itemName",
+													"type": "Expression"
+												}
 											}
 										},
 										"enableStaging": false,
@@ -614,9 +601,14 @@
 									},
 									"inputs": [
 										{
-											"referenceName": "nyc_raw_data_file",
+											"referenceName": "nyc_dest_dataset",
 											"type": "DatasetReference",
-											"parameters": {}
+											"parameters": {
+												"filename": {
+													"value": "@activity('Get column count').output.itemName",
+													"type": "Expression"
+												}
+											}
 										}
 									],
 									"outputs": [
@@ -626,13 +618,18 @@
 											"parameters": {}
 										}
 									]
-								}
-							],
-							"ifTrueActivities": [
+								},
 								{
-									"name": "Notebook1",
-									"type": "DatabricksNotebook",
-									"dependsOn": [],
+									"name": "Delete faulty file",
+									"type": "Delete",
+									"dependsOn": [
+										{
+											"activity": "Copy faulty files",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
 									"policy": {
 										"timeout": "7.00:00:00",
 										"retry": 0,
@@ -642,19 +639,32 @@
 									},
 									"userProperties": [],
 									"typeProperties": {
-										"notebookPath": "/Repos/gabriel.illes@tsiddappagile.onmicrosoft.com/Databricks_notebooks/notebooks/Users/gabriel.illes@tsiddappagile.onmicrosoft.com/clean_data"
-									},
-									"linkedServiceName": {
-										"referenceName": "Databricks_cluster",
-										"type": "LinkedServiceReference"
+										"dataset": {
+											"referenceName": "nyc_dest_dataset",
+											"type": "DatasetReference",
+											"parameters": {
+												"filename": {
+													"value": "@activity('Get column count').output.itemName",
+													"type": "Expression"
+												}
+											}
+										},
+										"enableLogging": false,
+										"storeSettings": {
+											"type": "AzureBlobFSReadSettings",
+											"recursive": true,
+											"enablePartitionDiscovery": false
+										}
 									}
-								},
+								}
+							],
+							"ifTrueActivities": [
 								{
-									"name": "Copy to Archive",
+									"name": "Copy source file to archive",
 									"type": "Copy",
 									"dependsOn": [
 										{
-											"activity": "Notebook1",
+											"activity": "Validate data",
 											"dependencyConditions": [
 												"Succeeded"
 											]
@@ -674,11 +684,6 @@
 											"storeSettings": {
 												"type": "AzureBlobFSReadSettings",
 												"recursive": true,
-												"wildcardFolderPath": "nyc_data",
-												"wildcardFileName": {
-													"value": "@variables('filename')",
-													"type": "Expression"
-												},
 												"enablePartitionDiscovery": false
 											},
 											"formatSettings": {
@@ -693,10 +698,14 @@
 											"formatSettings": {
 												"type": "DelimitedTextWriteSettings",
 												"quoteAllText": true,
-												"fileExtension": ".csv"
+												"fileExtension": {
+													"value": "@activity('Get column count').output.itemName",
+													"type": "Expression"
+												}
 											}
 										},
 										"enableStaging": false,
+										"validateDataConsistency": true,
 										"translator": {
 											"type": "TabularTranslator",
 											"typeConversion": true,
@@ -708,9 +717,14 @@
 									},
 									"inputs": [
 										{
-											"referenceName": "nyc_raw_data_file",
+											"referenceName": "nyc_dest_dataset",
 											"type": "DatasetReference",
-											"parameters": {}
+											"parameters": {
+												"filename": {
+													"value": "@activity('Get column count').output.itemName",
+													"type": "Expression"
+												}
+											}
 										}
 									],
 									"outputs": [
@@ -722,11 +736,31 @@
 									]
 								},
 								{
-									"name": "Delete processed file",
+									"name": "Validate data",
+									"type": "DatabricksNotebook",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"notebookPath": "/Repos/gabriel.illes@tsiddappagile.onmicrosoft.com/Databricks_notebooks/notebooks/Users/gabriel.illes@tsiddappagile.onmicrosoft.com/clean_data"
+									},
+									"linkedServiceName": {
+										"referenceName": "Databricks_cluster",
+										"type": "LinkedServiceReference"
+									}
+								},
+								{
+									"name": "Delete source file",
 									"type": "Delete",
 									"dependsOn": [
 										{
-											"activity": "Copy to Archive",
+											"activity": "Copy source file to archive",
 											"dependencyConditions": [
 												"Succeeded"
 											]
@@ -742,90 +776,41 @@
 									"userProperties": [],
 									"typeProperties": {
 										"dataset": {
-											"referenceName": "nyc_raw_data_file",
+											"referenceName": "nyc_dest_dataset",
 											"type": "DatasetReference",
-											"parameters": {}
+											"parameters": {
+												"filename": {
+													"value": "@activity('Get column count').output.itemName",
+													"type": "Expression"
+												}
+											}
 										},
 										"enableLogging": false,
 										"storeSettings": {
 											"type": "AzureBlobFSReadSettings",
 											"recursive": true,
-											"wildcardFileName": {
-												"value": "@{variables('filename')}",
-												"type": "Expression"
-											},
 											"enablePartitionDiscovery": false
 										}
 									}
 								}
 							]
 						}
-					},
-					{
-						"name": "Set variable1",
-						"type": "SetVariable",
-						"dependsOn": [
-							{
-								"activity": "Get filename",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"userProperties": [],
-						"typeProperties": {
-							"variableName": "filename",
-							"value": {
-								"value": "activity('Get column count').output.childItems[0].name",
-								"type": "Expression"
-							}
-						}
 					}
 				],
-				"variables": {
-					"filename": {
-						"type": "String",
-						"defaultValue": "filename"
+				"parameters": {
+					"url": {
+						"type": "string"
 					}
 				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/nyc_raw_data_file')]",
-				"[concat(variables('factoryId'), '/datasets/faulty_files')]",
-				"[concat(variables('factoryId'), '/linkedServices/Databricks_cluster')]",
-				"[concat(variables('factoryId'), '/datasets/Archive_files')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/new_file')]",
-			"type": "Microsoft.DataFactory/factories/triggers",
-			"apiVersion": "2018-06-01",
-			"properties": {
 				"annotations": [],
-				"runtimeState": "Started",
-				"pipelines": [
-					{
-						"pipelineReference": {
-							"referenceName": "test input file",
-							"type": "PipelineReference"
-						},
-						"parameters": {}
-					}
-				],
-				"type": "BlobEventsTrigger",
-				"typeProperties": {
-					"blobPathBeginsWith": "/raw-data/blobs/nyc_data/",
-					"blobPathEndsWith": ".csv",
-					"ignoreEmptyBlobs": true,
-					"scope": "[parameters('new_file_properties_typeProperties_scope')]",
-					"events": [
-						"Microsoft.Storage.BlobCreated"
-					]
-				}
+				"lastPublishTime": "2021-09-08T06:31:50Z"
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/test input file')]"
+				"[concat(variables('factoryId'), '/datasets/nyc_source_dataset')]",
+				"[concat(variables('factoryId'), '/datasets/nyc_dest_dataset')]",
+				"[concat(variables('factoryId'), '/datasets/faulty_files')]",
+				"[concat(variables('factoryId'), '/datasets/Archive_files')]",
+				"[concat(variables('factoryId'), '/linkedServices/Databricks_cluster')]"
 			]
 		}
 	]
