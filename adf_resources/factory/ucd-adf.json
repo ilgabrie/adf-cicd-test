@@ -1,5 +1,13 @@
 {
 	"name": "ucd-adf",
+	"properties": {
+		"globalParameters": {
+			"month": {
+				"type": "string",
+				"value": "01"
+			}
+		}
+	},
 	"location": "westeurope",
 	"identity": {
 		"type": "SystemAssigned",
