@@ -107,6 +107,8 @@
 						"storeSettings": {
 							"type": "AzureBlobFSReadSettings",
 							"recursive": true,
+							"wildcardFolderPath": "nyc_data",
+							"wildcardFileName": "green_tripdata_*.csv",
 							"enablePartitionDiscovery": false
 						},
 						"formatSettings": {
@@ -136,7 +138,7 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "nyc_dest_dataset",
+						"referenceName": "nyc_raw_data_file",
 						"type": "DatasetReference"
 					}
 				],
@@ -168,13 +170,14 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataset": {
-						"referenceName": "nyc_dest_dataset",
+						"referenceName": "nyc_raw_data_file",
 						"type": "DatasetReference"
 					},
 					"enableLogging": false,
 					"storeSettings": {
 						"type": "AzureBlobFSReadSettings",
 						"recursive": true,
+						"wildcardFileName": "green_tripdata_*.csv",
 						"enablePartitionDiscovery": false
 					}
 				}
