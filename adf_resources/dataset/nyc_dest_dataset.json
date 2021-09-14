@@ -5,13 +5,18 @@
 			"referenceName": "Raw_data",
 			"type": "LinkedServiceReference"
 		},
+		"parameters": {
+			"month": {
+				"type": "string"
+			}
+		},
 		"annotations": [],
 		"type": "DelimitedText",
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
 				"fileName": {
-					"value": "@concat('NYC_Green_', formatDateTime(utcnow(), 'yyyy-MM-dd-HH'), '-', string(rand(1, 1000)),'.csv')",
+					"value": "@concat('green_tripdata_2020-', dataset().month, '.csv')",
 					"type": "Expression"
 				},
 				"folderPath": "nyc_data",
