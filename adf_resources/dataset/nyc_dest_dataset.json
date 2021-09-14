@@ -10,10 +10,6 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"fileName": {
-					"value": "@concat('green_tripdata_2020-', dataset().month, '.csv')",
-					"type": "Expression"
-				},
 				"folderPath": "nyc_data",
 				"fileSystem": "raw-data"
 			},
