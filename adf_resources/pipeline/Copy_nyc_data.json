@@ -105,6 +105,7 @@
 					],
 					"storeSettings": {
 						"type": "AzureBlobFSReadSettings",
+						"recursive": true,
 						"enablePartitionDiscovery": false
 					},
 					"formatSettings": {
@@ -242,7 +243,13 @@
 							"type": "Copy",
 							"dependsOn": [
 								{
-									"activity": "Validate data",
+									"activity": "Ride stats",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								},
+								{
+									"activity": "Financial stats",
 									"dependencyConditions": [
 										"Succeeded"
 									]
@@ -368,6 +375,60 @@
 									"recursive": true,
 									"enablePartitionDiscovery": false
 								}
+							}
+						},
+						{
+							"name": "Ride stats",
+							"type": "DatabricksNotebook",
+							"dependsOn": [
+								{
+									"activity": "Validate data",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"notebookPath": "/Repos/gabriel.illes@tsiddappagile.onmicrosoft.com/Databricks_notebooks/notebooks/Users/gabriel.illes@tsiddappagile.onmicrosoft.com/nyc_rides_stats"
+							},
+							"linkedServiceName": {
+								"referenceName": "Databricks_cluster",
+								"type": "LinkedServiceReference"
+							}
+						},
+						{
+							"name": "Financial stats",
+							"type": "DatabricksNotebook",
+							"dependsOn": [
+								{
+									"activity": "Validate data",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"notebookPath": "/Repos/gabriel.illes@tsiddappagile.onmicrosoft.com/Databricks_notebooks/notebooks/Users/gabriel.illes@tsiddappagile.onmicrosoft.com/financial_stats"
+							},
+							"linkedServiceName": {
+								"referenceName": "Databricks_cluster",
+								"type": "LinkedServiceReference"
 							}
 						}
 					]
